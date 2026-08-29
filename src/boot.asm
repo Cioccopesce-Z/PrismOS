@@ -9,8 +9,20 @@ KERNEL_LOAD_SEG equ 0x1000
 KERNEL_START_ADDR equ 0x100000
 
 
+section .data
+    newline db 0x0a
+    stre db 'hello from bootloader', 0x0a, 0
+
 
 start:
+
+    mov ax, 0
+    mov ds, ax
+
+    mov si, stre
+    call print
+
+
     cli           ; Clear interrupts, disabling all maskable interrupts
     mov ax, 0x00  ; Load immediate value 0x00 into register AX
     mov ds, ax    ; Set data segment (DS) to 0x00
@@ -29,7 +41,7 @@ mov dl, 0x80
 mov cl, 0x02
 mov ch, 0x00
 mov ah, 0x02
-mov al, 8
+mov al, 10
 int 0x13
 
 jc disk_read_error
@@ -77,6 +89,8 @@ gdt_descriptor:
 
 
 [BITS 32]
+
+
 PModeMain:
     mov ax, DATA_OFFSET
     mov ds, ax
@@ -91,19 +105,59 @@ PModeMain:
     or al, 2
     out 0x92, al
 
-    ; Rilocazione: copia il kernel da dove il BIOS lo ha scritto (0x10000)
-    ; a dove linker script e jump si aspettano che sia (0x100000)
-    mov esi, 0x10000
-    mov edi, KERNEL_START_ADDR
-    mov ecx, 1024        ; 8 settori × 512 byte / 4 byte per dword
-    cld
-    rep movsd
+    ; Rilocazione: copia il kernel da dove il BIOS lo ha effettivamente
+    ; scritto in memoria (0x10000, calcolato come KERNEL_LOAD_SEG * 16)
+    ; all'indirizzo dove il codice compilato si aspetta di trovarsi
+    ; secondo il linker script (0x100000, cioe' KERNEL_START_ADDR)
+    mov esi, 0x10000          ; indirizzo sorgente: dove ha scritto il BIOS
+    mov edi, KERNEL_START_ADDR ; indirizzo destinazione: dove serve al kernel
+    mov ecx, 1280              ; numero di doppie parole da copiare
+                                ; (8 settori x 512 byte / 4 byte per doppia parola)
+    cld                         ; azzera la direzione di scorrimento: ESI/EDI
+                                ; avanzano invece di decrementare
+    rep movsd                   ; ripete "copia [ESI] in [EDI]" ECX volte
 
     jmp CODE_OFFSET:KERNEL_START_ADDR
 
     jmp CODE_OFFSET:KERNEL_START_ADDR
 
 
+println:
+    push eax
+    push ebx
+    push ecx
+    push edx
+
+    mov eax, 21
+    mov ebx, 1
+    mov ecx, newline
+    mov edx, 1
+    int 0x80
+
+    pop edx
+    pop ecx
+    pop ebx
+    pop eax
+
+    ret
+
+
+
+
+print:
+    lodsb
+    cmp al, 0
+    je .done
+
+    mov ah, 0x0E
+    mov bh, 0x00
+    mov bl, 0x07
+    int 0x10
+
+    jmp print
+
+.done:
+    ret
 
 
 times 510 - ($ - $$) db 0   ; Fill the rest of the boot sector with zeros up to 510 bytes
