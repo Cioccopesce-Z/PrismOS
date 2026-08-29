@@ -39,8 +39,18 @@ static void rimappa_il_pic(){
     scrivi_byte_su_porta(0x21, 0x01);
     scrivi_byte_su_porta(0xA1, 0x01);
 
-    scrivi_byte_su_porta(0x21, 0x00); // abilita tutte le interruzioni del PIC principale
-    scrivi_byte_su_porta(0xA1, 0x00); // abilita tutte le interruzioni del PIC secondario
+    // Maschera tutte le IRQ tranne IRQ1 (tastiera). E' fondamentale non
+    // abilitarle tutte come prima: il PIT (timer), collegato a IRQ0, genera
+    // interruzioni gia' da solo circa 18 volte al secondo per conto suo,
+    // anche senza che tu lo abbia programmato esplicitamente. Se quella
+    // interruzione arriva e trova una voce della IDT vuota (non presente,
+    // com'e' il caso di tutte le voci tranne 0x21), il processore solleva
+    // un'eccezione "Not Present"; siccome anche il gestore di QUELLA
+    // eccezione e' assente, si arriva a un double fault e poi, a cascata,
+    // a un triple fault che resetta la macchina. E' questo che stavi
+    // vedendo subito dopo la stampa di "kill yourself".
+    scrivi_byte_su_porta(0x21, 0xFD); // 1111 1101: solo il bit di IRQ1 e' a 0 (abilitata)
+    scrivi_byte_su_porta(0xA1, 0xFF); // PIC secondario non usato: maschera tutto
 }
 
 void idt_inizializza(){

@@ -41,7 +41,7 @@ mov dl, 0x80
 mov cl, 0x02
 mov ch, 0x00
 mov ah, 0x02
-mov al, 10
+mov al, 16
 int 0x13
 
 jc disk_read_error
@@ -111,7 +111,7 @@ PModeMain:
     ; secondo il linker script (0x100000, cioe' KERNEL_START_ADDR)
     mov esi, 0x10000          ; indirizzo sorgente: dove ha scritto il BIOS
     mov edi, KERNEL_START_ADDR ; indirizzo destinazione: dove serve al kernel
-    mov ecx, 1280              ; numero di doppie parole da copiare
+    mov ecx, 8192              ; numero di doppie parole da copiare
                                 ; (8 settori x 512 byte / 4 byte per doppia parola)
     cld                         ; azzera la direzione di scorrimento: ESI/EDI
                                 ; avanzano invece di decrementare
