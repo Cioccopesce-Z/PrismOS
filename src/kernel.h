@@ -27,8 +27,5 @@
 #define VGA_WHITE       0x0F
 
 void kernel_main();
-void clear_screen();
-void stampa_carattere(char carattere);
-void print(char *str);
 
 #endif

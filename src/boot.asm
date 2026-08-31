@@ -8,6 +8,8 @@ DATA_OFFSET equ 0x10
 KERNEL_LOAD_SEG equ 0x1000
 KERNEL_START_ADDR equ 0x100000
 
+MAPPA_MEMORIA_ADDR equ 0x8000   ; area libera tra il boot sector e 0x10000
+
 
 section .data
     newline db 0x0a
@@ -30,7 +32,9 @@ start:
     mov ss, ax    ; Set stack segment (SS) to 0x00
     mov sp, 0x7c00; Set stack pointer (SP) to 0x7c00, top of the bootloader segment
     sti           ; Enable interrupts, allowing them to occur again
-    
+
+    call rileva_mappa_memoria   ; deve girare qui: solo in real mode il BIOS risponde
+
 
 ;Load kernel
 mov ax, KERNEL_LOAD_SEG
@@ -58,6 +62,44 @@ load_PM:
 
 disk_read_error:
     hlt
+
+; ------------------------------------------------------------
+; Mappa di memoria: interroga il BIOS (E820), risultato a 0x8000.
+; Formato scritto: [contatore voci a 32 bit][voce][voce]...
+; ------------------------------------------------------------
+rileva_mappa_memoria:
+    pusha
+
+    xor ax, ax
+    mov es, ax
+    mov di, MAPPA_MEMORIA_ADDR + 4   ; le voci iniziano dopo il contatore
+
+    xor ebx, ebx    ; ebx=0 alla prima chiamata: convenzione del servizio
+    xor si, si      ; si = voci trovate finora
+
+.ciclo:
+    mov eax, 0xE820
+    mov edx, 0x534D4150   ; firma 'SMAP', obbligatoria
+    mov ecx, 24
+    int 0x15
+
+    jc .fine          ; CF alto = servizio non supportato o errore
+    cmp ebx, 0
+    je .ultima         ; ebx=0 = era l'ultima voce disponibile
+
+    add di, 24
+    inc si
+    jmp .ciclo
+
+.ultima:
+    inc si
+
+.fine:
+    mov [MAPPA_MEMORIA_ADDR], si   ; scrive il totale voci trovate
+
+    popa
+    ret
+
 
 ;GDT Implemetation
 
@@ -122,26 +164,6 @@ PModeMain:
     jmp CODE_OFFSET:KERNEL_START_ADDR
 
 
-println:
-    push eax
-    push ebx
-    push ecx
-    push edx
-
-    mov eax, 21
-    mov ebx, 1
-    mov ecx, newline
-    mov edx, 1
-    int 0x80
-
-    pop edx
-    pop ecx
-    pop ebx
-    pop eax
-
-    ret
-
-
 
 
 print:
@@ -163,6 +185,3 @@ print:
 times 510 - ($ - $$) db 0   ; Fill the rest of the boot sector with zeros up to 510 bytes
 
 dw 0xAA55   ; Boot sector signature, required to make the disk bootable
-
-
-

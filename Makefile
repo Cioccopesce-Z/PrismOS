@@ -91,8 +91,14 @@ $(OBJECT_KERNEL_COMPLETE): $(OBJECT_ENTRY_ASM) $(OBJECTS_C)
 
 # Produce il binario finale del kernel, usando lo script del linker
 # per decidere indirizzi e ordine delle sezioni in memoria.
+#   -lgcc  collega libgcc: la libreria interna del compilatore che
+#          implementa operazioni che la CPU x86 a 32 bit non sa fare
+#          in una singola istruzione, come dividere due numeri a 64
+#          bit (__udivdi3, __umoddi3). Non e' legata a nessun sistema
+#          operativo, quindi resta valida anche con -nostdlib.
 ./bin/kernel.bin: $(OBJECT_KERNEL_COMPLETE) | ./bin
-	i686-elf-gcc $(COMPILER_FLAGS) -T ./src/linkerScript.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib $(OBJECT_KERNEL_COMPLETE)
+	i686-elf-gcc $(COMPILER_FLAGS) -T ./src/linkerScript.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib $(OBJECT_KERNEL_COMPLETE) -lgcc
+
 
 # Assembla il bootloader (settore di avvio, 512 byte).
 ./bin/boot.bin: ./src/boot.asm | ./bin

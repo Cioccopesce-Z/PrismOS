@@ -1,6 +1,6 @@
 // file: src/keyboard.c
 #include "keyboard.h"
-#include "kernel.h"
+#include "stdf.h"
 #include "io.h"
 
 // Fa corrispondere ogni "scan code" (il numero che la tastiera invia
@@ -36,8 +36,9 @@ void gestore_interruzione_tastiera(void *informazioni_interruzione){
     // cioe' un "break code") quando viene rilasciato. Per ora
     // interessano solo le pressioni: i rilasci vengono ignorati.
     if(scan_code < 0x80){
+        //stampa_carattere(scan_code);
         if(scan_code < sizeof(tabella_scan_code_in_caratteri) && tabella_scan_code_in_caratteri[scan_code] != 0){
-            stampa_carattere(tabella_scan_code_in_caratteri[scan_code]);
+            print(tabella_scan_code_in_caratteri[scan_code]);
         }
     }
 

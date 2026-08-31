@@ -1,4 +1,6 @@
-build/keyboard.o: src/keyboard.c src/keyboard.h src/kernel.h src/io.h
+build/keyboard.o: src/keyboard.c src/keyboard.h src/stdf.h \
+ src/splash_screen.h src/io.h
 src/keyboard.h:
-src/kernel.h:
+src/stdf.h:
+src/splash_screen.h:
 src/io.h:

@@ -3,6 +3,8 @@ OUTPUT_FORMAT(binary)
 SECTIONS
 {
     . = 0x0100000;
+    inizio_kernel = .;   /* indirizzo fisico di partenza del kernel */
+
     .text : ALIGN(4096)
     {
         *(.text)
@@ -23,4 +25,6 @@ SECTIONS
         *(COMMON)
         *(.bss)
     }
+
+    fine_kernel = .;   /* indirizzo fisico subito dopo l'ultimo byte del kernel */
 }
