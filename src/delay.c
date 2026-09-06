@@ -99,7 +99,7 @@ void temporizzatore_inizializza(){
     scrivi_byte_su_porta(0x21, nuova_maschera);
 }
 
-void temporizzatore_aspetta_millisecondi(unsigned int millisecondi){
+void waaait(unsigned int millisecondi){
     unsigned int millisecondo_di_arrivo = contatore_millisecondi + millisecondi;
 
     while(contatore_millisecondi < millisecondo_di_arrivo){

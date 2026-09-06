@@ -15,6 +15,7 @@ void print(char carattere);
 void print_at_color(char *str, int row, int col, char color);
 
 void stampa_stringa(char *stringa);
+void present();
 void n_to_hex_str(unsigned long long valore, char *buffer_destinazione);
 void n_to_str(unsigned long long valore, char *buffer_destinazione);
 void stampa_regioni_utilizzabili(void);

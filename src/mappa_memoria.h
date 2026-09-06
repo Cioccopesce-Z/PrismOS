@@ -18,7 +18,7 @@ struct voce_mappa_memoria_bios
     unsigned int attributi_estesi;
 } __attribute__((packed));
 
-// Formato nostro, libero
+// Formato libero
 struct regione_memoria_utilizzabile
 {
     unsigned long long indirizzo_base;
@@ -26,6 +26,18 @@ struct regione_memoria_utilizzabile
 };
 
 #define NUMERO_MASSIMO_REGIONI_UTILIZZABILI 32
+
+// Restituisce spazio alla mappa delle regioni libere (usata da libera()
+// in stdf.c per non dover accedere direttamente all'array interno,
+// che resta privato a questo file).
+void mappa_memoria_aggiungi_regione_libera(unsigned long long indirizzo_base, unsigned long long lunghezza_byte);
+
+// Rimuove la regione all'indice dato, compattando l'array. Restituisce
+// 1 se rimossa, 0 se l'indice non era valido. Serve a libera(), per il
+// caso in cui un blocco rilasciato faccia da "ponte" tra due regioni
+// libere gia' esistenti: una delle due, dopo la fusione, diventa
+// ridondante e va eliminata.
+int mappa_memoria_rimuovi_regione(unsigned int indice);
 
 void mappa_memoria_inizializza(void);
 unsigned int mappa_memoria_numero_regioni_utilizzabili(void);

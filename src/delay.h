@@ -16,7 +16,7 @@ void temporizzatore_inizializza();
 // senza tenere il processore occupato al 100% per niente: usa "hlt"
 // per fermarlo fino alla prossima interruzione qualsiasi, invece di
 // un ciclo vuoto che lo farebbe girare a vuoto per tutta l'attesa.
-void temporizzatore_aspetta_millisecondi(unsigned int millisecondi);
+void waaait(unsigned int millisecondi);
 
 // Gestore invocato automaticamente dal processore quando il PIT genera
 // un'interruzione (circa 1000 volte al secondo, con la configurazione

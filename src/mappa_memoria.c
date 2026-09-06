@@ -73,3 +73,24 @@ struct regione_memoria_utilizzabile *mappa_memoria_ottieni_regione(unsigned int 
 {
     return &regioni_utilizzabili[indice];
 }
+
+void mappa_memoria_aggiungi_regione_libera(unsigned long long indirizzo_base, unsigned long long lunghezza_byte)
+{
+    aggiungi_regione_utilizzabile(indirizzo_base, lunghezza_byte);
+}
+
+int mappa_memoria_rimuovi_regione(unsigned int indice)
+{
+    if (indice >= numero_regioni_utilizzabili)
+    {
+        return 0;
+    }
+
+    for (unsigned int j = indice; j < numero_regioni_utilizzabili - 1; j++)
+    {
+        regioni_utilizzabili[j] = regioni_utilizzabili[j + 1];
+    }
+    numero_regioni_utilizzabili--;
+    return 1;
+}
+
