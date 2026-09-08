@@ -23,28 +23,6 @@ void kernel_main() <%
     
 
     unsigned char *idx;
-
-
-    idx = alloc(654336);
-    fprint(idx,'p');
-    print('\n');
-
-
-
-    idx = alloc(1);
-    fprint(idx,'p');
-    print('\n');
-
-
-
-    idx = alloc(2);
-    fprint(idx,'p');
-    fprint("\n\n",'s');
-
-    libera(idx);
-
-
-
     idx = alloc(8);
 
     fprint(idx,'p');
