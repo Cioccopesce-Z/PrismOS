@@ -26,8 +26,7 @@ void stampa_regioni_utilizzabili(void)
     }
 }
 
-#define ALLINEAMENTO_ALLOCAZIONE 4ULL
-#define NUMERO_MASSIMO_BLOCCHI_ALLOCATI 128
+
 
 // Tiene traccia di ogni allocazione ancora attiva: indirizzo restituito
 // al chiamante e quanti byte occupa. Serve a libera(), che riceve solo

@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "delay.h"
 #include "idt.h"
+#include "loc.h"
 #include "mappa_memoria.h"
 #include "stdf.h"
 
@@ -21,23 +22,40 @@ void kernel_main() <%
     print('\n');
     
 
-    void *idx = alloc(654336);
+    unsigned char *idx;
 
-    char *str;
-    n_to_hex_str((int)idx,str);
 
-    stampa_stringa(str);
-
+    idx = alloc(654336);
+    fprint(idx,'p');
     print('\n');
 
-    idx = alloc(6);
 
-    
-    n_to_hex_str((int)idx,str);
 
-    stampa_stringa(str);
-
+    idx = alloc(1);
+    fprint(idx,'p');
     print('\n');
+
+
+
+    idx = alloc(2);
+    fprint(idx,'p');
+    fprint("\n\n",'s');
+
+    libera(idx);
+
+
+
+    idx = alloc(8);
+
+    fprint(idx,'p');
+    print('\n');
+    fprint(&idx[1],'p');
+    print('\n');
+    fprint(&idx[2],'p');
+    print('\n');
+    fprint(&idx[3],'p');
+    print('\n');
+
 
     while(1) {
         __asm__ volatile ("hlt");
