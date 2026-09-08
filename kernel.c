@@ -21,9 +21,18 @@ void kernel_main() <%
     print('\n');
     
 
-    void *idx = alloc(100002);
+    void *idx = alloc(654336);
 
     char *str;
+    n_to_hex_str((int)idx,str);
+
+    stampa_stringa(str);
+
+    print('\n');
+
+    idx = alloc(6);
+
+    
     n_to_hex_str((int)idx,str);
 
     stampa_stringa(str);
