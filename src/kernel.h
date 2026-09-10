@@ -7,6 +7,11 @@
 #define VIDEO_MEMORY_ADDRESS 0xB8000
 #define DEFAULT_COLOR_ATTRIBUTE 0x0F
 
+
+#define __uint8_t char
+#define size_t int
+#define __uintmax_t long
+
 #define SCREEN_WIDTH 80
 #define SCREEN_HEIGHT 25
 

@@ -96,6 +96,12 @@ void *alloc(unsigned long long byte)
 }
 
 
+void *ralloc(void* pt, size_t dimension)
+{
+    return pt;
+}
+
+
 // Cerca tra le regioni libere un vicino sinistro (che finisce esattamente
 // dove inizia il blocco rilasciato) e uno destro (che inizia esattamente
 // dove il blocco finisce), fondendo con entrambi se presenti invece di

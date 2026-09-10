@@ -165,7 +165,7 @@ void print(char carattere)
 // per stampare testo composto da piu' caratteri (come i numeri
 // convertiti in stringa qui sotto) senza scrivere lo stesso ciclo
 // ogni volta che serve.
-void stampa_stringa(char *stringa)
+void stampa_stringa(char stringa[])
 {
     int indice = 0;
     while(stringa[indice] != '\0')

@@ -93,4 +93,3 @@ int mappa_memoria_rimuovi_regione(unsigned int indice)
     numero_regioni_utilizzabili--;
     return 1;
 }
-
