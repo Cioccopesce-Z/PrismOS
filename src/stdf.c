@@ -1,104 +1,9 @@
 #include "kernel.h"
+
+#include <stdarg.h>
 #include "stdf.h"
 #include "delay.h"
 #include "type_conv.h"
-
-// Stampa un valore di tipo variabile a seconda di 'tipo'. Per 's' il
-// chiamante passa direttamente il puntatore alla stringa (una stringa
-// in C e' gia' di per se' un indirizzo al suo primo carattere, non
-// serve altro). Per tutti gli altri tipi, il chiamante deve passare
-// l'INDIRIZZO della variabile (con l'operatore &), perche' qui dentro
-// serve leggere il valore vero e proprio andando a quell'indirizzo,
-// non semplicemente reinterpretare l'indirizzo stesso come se fosse
-// il dato: sono due operazioni diverse.
-//
-// Esempi d'uso:
-//   int numero = 42;
-//   stampa_valore(&numero, 'i');
-//
-//   char lettera = 'A';
-//   stampa_valore(&lettera, 'c');
-//
-//   stampa_valore("ciao", 's');
-void fprint(void *dato, char tipo)
-{
-    switch (tipo)
-    {
-        case 's':
-
-            stampa_stringa(dato);
-
-        break;
-
-        case 'i':
-        {
-            // Va dereferenziato: 'dato' e' l'indirizzo dell'intero,
-            // non l'intero stesso. (int*)dato dice al compilatore
-            // "qui c'e' un intero", e * legge quell'intero dalla
-            // memoria a quell'indirizzo.
-            int valore = *(int*)dato;
-            char testo[21]; // spazio sufficiente per un numero a 64 bit piu' segno
-
-            if (valore < 0)
-            {
-                print('-');
-                // Nota: non gestisce il caso limite di INT_MIN, il
-                // valore intero negativo piu' piccolo rappresentabile,
-                // la cui negazione andrebbe in overflow. Caso raro,
-                // lasciato volutamente non gestito per ora.
-                n_to_str((unsigned long long)(-valore), testo);
-            }
-            else
-            {
-                n_to_str((unsigned long long)valore, testo);
-            }
-
-            stampa_stringa(testo);
-        }
-        break;
-
-        case 'f':
-
-            // Non ancora implementato: manca una funzione che converta
-            // un float in testo, e usare float nel kernel richiede
-            // prima di inizializzare correttamente la FPU (argomento
-            // separato, da affrontare piu' avanti).
-
-        break;
-
-        case 'c':
-        {
-            char valore = *(char*)dato;
-            print(valore);
-        }
-        break;
-
-        case 'h':
-
-            // Non ancora implementato: riservato per una futura
-            // stampa in esadecimale di un valore intero (da
-            // distinguere dal case 'p', che stampa l'indirizzo stesso).
-
-        break;
-
-        case 'p':
-        {
-            // Qui non serve dereferenziare: vogliamo stampare
-            // l'indirizzo stesso contenuto in 'dato', non il valore
-            // a cui punta.
-            char testo_indirizzo[19]; // "0x" + 16 cifre + terminatore
-            n_to_hex_str((unsigned long long)(unsigned long)dato, testo_indirizzo);
-            stampa_stringa(testo_indirizzo);
-        }
-        break;
-
-        default:
-
-            // Tipo sconosciuto: ignorato silenziosamente.
-
-        break;
-    }
-}
 
 
 // Scrive un carattere e il suo colore in una cella dello schermo,
@@ -234,19 +139,118 @@ void stampa_dump_memoria(unsigned char *indirizzo_di_partenza, unsigned int nume
 {
     for (unsigned int indice_byte = 0; indice_byte < numero_di_byte; indice_byte++)
     {
-        char testo_indirizzo[19];
-        char testo_valore[19];
-        int testo_decimal_valore;
-
-        n_to_hex_str((unsigned long long)(unsigned long)(indirizzo_di_partenza + indice_byte), testo_indirizzo);
-        n_to_hex_str((unsigned long long)indirizzo_di_partenza[indice_byte], testo_valore);
-        testo_decimal_valore = hex_str_to_n(testo_valore);
-
-        stampa_stringa(testo_indirizzo);
-        print(' ');
-        stampa_stringa(testo_valore);
-        print(' ');
-        fprint(&testo_decimal_valore,'i');
-        print('\n');
+        fprint("%p %x %d\n",
+                         indirizzo_di_partenza + indice_byte,
+                         (unsigned int)indirizzo_di_partenza[indice_byte],
+                         (int)indirizzo_di_partenza[indice_byte]);
     }
+}
+
+// Stampa una stringa di formato sostituendo via via ogni specificatore
+// (%d, %x, %s, %c, %%) con l'argomento corrispondente preso dalla
+// lista variabile. E' una versione ridotta della printf standard:
+// supporta solo i casi che servono in un kernel, non l'enorme numero
+// di varianti (larghezza, precisione, flag...) della printf completa
+// - quelle si possono aggiungere in seguito se servono davvero.
+void fprint(const char *formato, ...)
+{
+    va_list argomenti;
+    va_start(argomenti, formato);   // si posiziona subito dopo "formato"
+
+    int indice = 0;
+    while (formato[indice] != '\0')
+    {
+        char carattere_corrente = formato[indice];
+
+        if (carattere_corrente != '%')
+        {
+            print(carattere_corrente);
+            indice++;
+            continue;
+        }
+
+        indice++; // salta il '%', ora guardiamo lo specificatore
+        char specificatore = formato[indice];
+
+        switch (specificatore)
+        {
+            case 'd':
+            {
+                int valore = va_arg(argomenti, int);
+                char testo_numero[21];
+
+                if (valore < 0)
+                {
+                    print('-');
+                    // Nota: qui non gestiamo il caso limite in cui
+                    // valore e' esattamente il piu' piccolo int
+                    // rappresentabile, dove "-valore" andrebbe in
+                    // overflow. Per un kernel didattico va bene
+                    // ignorarlo, ma vale la pena saperlo.
+                    n_to_str((unsigned long long)(-valore), testo_numero);
+                }
+                else
+                {
+                    n_to_str((unsigned long long)valore, testo_numero);
+                }
+
+                stampa_stringa(testo_numero);
+                break;
+            }
+
+            case 'x':
+            {
+                unsigned int valore = va_arg(argomenti, unsigned int);
+                char testo_numero[19];
+                n_to_hex_str((unsigned long long)valore, testo_numero);
+                stampa_stringa(testo_numero);
+                break;
+            }
+
+            case 's':
+            {
+                char *testo = va_arg(argomenti, char*);
+                stampa_stringa(testo);
+                break;
+            }
+
+            case 'c':
+            {
+                // char viene promosso a int nel passaggio variadico:
+                // va letto come int, poi ridotto a char per stamparlo.
+                char valore = (char) va_arg(argomenti, int);
+                print(valore);
+                break;
+            }
+
+            case '%':
+            {
+                print('%');
+                break;
+            }
+
+            case 'p':
+            {
+                void *puntatore = va_arg(argomenti, void*);
+                char testo_indirizzo[19];
+                n_to_hex_str((unsigned long long)(unsigned long)puntatore, testo_indirizzo);
+                stampa_stringa(testo_indirizzo);
+                break;
+            }
+
+            default:
+            {
+                // Specificatore sconosciuto: lo stampiamo cosi' com'e'
+                // invece di ignorarlo, cosi' un errore di battitura nel
+                // formato si nota subito invece di sparire nel nulla.
+                print('%');
+                print(specificatore);
+                break;
+            }
+        }
+
+        indice++;
+    }
+
+    va_end(argomenti); // pulizia, obbligatoria per ogni va_start
 }

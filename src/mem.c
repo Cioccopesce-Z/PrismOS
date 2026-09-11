@@ -270,11 +270,9 @@ size_t resolve_value_lenght(size_t existing_lenght, size_t requested_lenght, __u
 size_t resolve_method_lenght(size_t existing_lenght, size_t method_address){
 
     size_t needed = bytes_needed(method_address);
-    fprint(&method_address, 'i');
-    stampa_stringa(" <- method_address in resolve method lenght\n");
+    fprint("%d <- method_address in resolve method lenght\n",method_address);
 
-    fprint(&needed, 'i');
-    stampa_stringa(" <- (1)needed in resolve method lenght\n");
+    fprint("%d  <- (1)needed in resolve method lenght\n",needed);
 
     if(existing_lenght > 0){
         if(needed > existing_lenght){
@@ -283,18 +281,15 @@ size_t resolve_method_lenght(size_t existing_lenght, size_t method_address){
         }
         return existing_lenght;
     }
-    fprint(&needed, 'i');
-    stampa_stringa(" <- (2)needed in resolve method lenght\n");
+    fprint("%d  <- (2)needed in resolve method lenght\n",needed);
 
     if(needed > byte_for_method_lenght){
 
-        fprint(&needed, 'i');
-        stampa_stringa(" <- (3)needed in resolve method lenght\n");
+        fprint("%d  <- (3)needed in resolve method lenght\n",needed);
         return 0;
     }
 
-    fprint(&needed, 'i');
-    stampa_stringa(" <- (3 o 4)return of resolve method lenght\n");
+    fprint("%d  <- (3 o 4)needed in resolve method lenght\n",needed);
 
     return needed;
 }
@@ -341,10 +336,8 @@ size_t initialize_variable(int use_scope, size_t scope_address,                 
 
 
     if(start >= to_declare){
-        fprint(&start, 'i');
-        print(' ');
-        fprint(&to_declare, 'i');
-        stampa_stringa("\nthe relative index to start a declaration from is higher than \nthe relative memory allocated for fegh\n");
+        fprint("%d %d",start, to_declare);
+        fprint("\nthe relative index to start a declaration from is higher than \nthe relative memory allocated for fegh\n");
         return start;
     }
 
@@ -370,8 +363,7 @@ size_t initialize_variable(int use_scope, size_t scope_address,                 
     }
     else{
         size_t method_lenght = resolve_method_lenght(existing_method_lenght, method_address);
-        fprint(&method_lenght, 'i');
-        stampa_stringa(" <- return of resolve method lenght\n");
+        fprint("%d  <- return of resolve method lenght\n",method_lenght);
         if(method_lenght == 0){stampa_stringa("uscita3\n"); return start;} // errore gia' stampato
 
 

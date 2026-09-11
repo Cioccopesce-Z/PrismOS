@@ -11,11 +11,11 @@ static int colonna_corrente = 0;
 
 /*clear the screen in vga mode with char*/
 void clear_screen(char character_to_use_to_fill_the_screen);
+void fprint(const char *formato, ...);
 void print(char carattere);
 void print_at_color(char *str, int row, int col, char color);
 
 void stampa_stringa(char *stringa);
-void fprint(void *dato, char tipo);
 void present();
 
 

@@ -42,28 +42,16 @@ void kernel_main() <%
     unsigned char *idx;
     idx = alloc(8);
 
-    fprint(idx,'p');
-    print('\n');
-    fprint(&idx[1],'p');
-    print('\n');
-    fprint(&idx[2],'p');
-    print('\n');
-    fprint(&idx[3],'p');
+    fprint("%p\n%p\n%p\n%p\n\n",idx,&idx[1],&idx[2],&idx[3]);
 
-    stampa_stringa("\n\n");
 
     int ix = initialize_variable(tru, main_scope, fal, auto, 
         auto, 28, tru, 59);
 
-    // ix e' un offset dentro il buffer "memory", non un indirizzo assoluto:
-    // per ottenere un puntatore reale va sommato al puntatore base del
-    // buffer stesso, non convertito da solo con itop().
+
     void *pt = memory + ix;
-
-    int lesbian = get_value_of_variable(ix);
-
-    fprint( &lesbian, 'i');
-    print('\n');
+    
+    fprint("%d\n",get_value_of_variable(ix));
 
     stampa_dump_memoria(memory,8);
 
