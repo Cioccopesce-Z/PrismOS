@@ -1,9 +1,9 @@
 #include "kernel.h"
+
 #include "delay.h"
 #include "idt.h"
 #include "loc.h"
 #include "mem.h"
-#include "type_conv.h"
 #include "mappa_memoria.h"
 #include "stdf.h"
 
@@ -60,31 +60,12 @@ void kernel_main() <%
     // buffer stesso, non convertito da solo con itop().
     void *pt = memory + ix;
 
-    fprint(pt,'p');
-    print(' ');
-    fprint( &pt, 'i');
-    print('\n');
-
-    fprint(&pt[1],'p');
-    print(' ');
-    fprint( &pt[1], 'i');
-    print('\n');
-
-    fprint(&pt[2],'p');
-    print(' ');
-    fprint( &pt[2], 'i');
-    print('\n');
-
-    fprint(&pt[3],'p');
-    print(' ');
-    fprint( &pt[3], 'i');
-    print('\n');
-
     int lesbian = get_value_of_variable(ix);
 
     fprint( &lesbian, 'i');
+    print('\n');
 
-    
+    stampa_dump_memoria(memory,8);
 
 
     while(1) {

@@ -1,6 +1,7 @@
 #include "kernel.h"
 #include "stdf.h"
 #include "delay.h"
+#include "type_conv.h"
 
 // Stampa un valore di tipo variabile a seconda di 'tipo'. Per 's' il
 // chiamante passa direttamente il puntatore alla stringa (una stringa
@@ -189,32 +190,7 @@ void print_at_color(char *str, int row, int col, char color)
 }
 
 
-// Converte un numero a 64 bit nella sua rappresentazione esadecimale,
-// con prefisso "0x", scrivendola in buffer_destinazione. Il buffer
-// deve avere spazio per almeno 19 caratteri: "0x" + 16 cifre + '\0'.
-//
-// L'esadecimale si presta a essere costruito dalla cifra piu'
-// significativa in poi (a differenza del decimale, vedi sotto),
-// perche' ogni cifra corrisponde esattamente a 4 bit: possiamo
-// "affettare" il numero a blocchi di 4 bit partendo da sinistra,
-// senza dover prima contare quante cifre avra' il risultato.
-void n_to_hex_str(unsigned long long valore, char *buffer_destinazione)
-{
-    const char cifre_esadecimali[] = "0123456789ABCDEF";
-    int posizione_scrittura = 0;
 
-    buffer_destinazione[posizione_scrittura++] = '0';
-    buffer_destinazione[posizione_scrittura++] = 'x';
-
-    for(int indice_cifra = 15; indice_cifra >= 0; indice_cifra--)
-    {
-        unsigned int spostamento_bit = indice_cifra * 4;
-        unsigned int valore_cifra = (valore >> spostamento_bit) & 0xF;
-        buffer_destinazione[posizione_scrittura++] = cifre_esadecimali[valore_cifra];
-    }
-
-    buffer_destinazione[posizione_scrittura] = '\0';
-}
 
 void present(){
     prism_screen();
@@ -244,40 +220,33 @@ void present(){
     waaait(300);
 }
 
-// Converte un numero a 64 bit nella sua rappresentazione decimale,
-// scrivendola in buffer_destinazione. Il buffer deve avere spazio
-// per almeno 21 caratteri (fino a 20 cifre per un numero a 64 bit,
-// piu' il terminatore).
-//
-// A differenza dell'esadecimale, dividere per 10 estrae le cifre
-// partendo dalla MENO significativa (l'ultima cifra del numero, non
-// la prima). Per questo le cifre vengono prima raccolte in ordine
-// inverso, poi ricopiate nell'ordine giusto: e' il modo standard di
-// scrivere questa conversione, vale la pena capirlo bene una volta.
-void n_to_str(unsigned long long valore, char *buffer_destinazione)
+
+
+
+
+// Stampa in esadecimale, un byte alla volta, il contenuto di un
+// intervallo di memoria: indirizzo del byte seguito dal suo valore.
+// Serve per ispezionare a occhio cosa contiene davvero una zona di
+// RAM quando non è disponibile un debugger: senza uno strumento del
+// genere bisognerebbe indovinare il contenuto leggendo il codice,
+// invece di vederlo direttamente.
+void stampa_dump_memoria(unsigned char *indirizzo_di_partenza, unsigned int numero_di_byte)
 {
-    char cifre_in_ordine_inverso[21];
-    int numero_di_cifre = 0;
-
-    if(valore == 0)
+    for (unsigned int indice_byte = 0; indice_byte < numero_di_byte; indice_byte++)
     {
-        buffer_destinazione[0] = '0';
-        buffer_destinazione[1] = '\0';
-        return;
-    }
+        char testo_indirizzo[19];
+        char testo_valore[19];
+        int testo_decimal_valore;
 
-    while(valore > 0)
-    {
-        cifre_in_ordine_inverso[numero_di_cifre] = '0' + (valore % 10);
-        valore = valore / 10;
-        numero_di_cifre++;
-    }
+        n_to_hex_str((unsigned long long)(unsigned long)(indirizzo_di_partenza + indice_byte), testo_indirizzo);
+        n_to_hex_str((unsigned long long)indirizzo_di_partenza[indice_byte], testo_valore);
+        testo_decimal_valore = hex_str_to_n(testo_valore);
 
-    for(int indice = 0; indice < numero_di_cifre; indice++)
-    {
-        buffer_destinazione[indice] = cifre_in_ordine_inverso[numero_di_cifre - 1 - indice];
+        stampa_stringa(testo_indirizzo);
+        print(' ');
+        stampa_stringa(testo_valore);
+        print(' ');
+        fprint(&testo_decimal_valore,'i');
+        print('\n');
     }
-    buffer_destinazione[numero_di_cifre] = '\0';
 }
-
-

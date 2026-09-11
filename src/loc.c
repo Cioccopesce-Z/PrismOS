@@ -1,6 +1,7 @@
 #include "loc.h"
 #include "mappa_memoria.h"
 #include "stdf.h"
+#include "type_conv.h"
 
 // Stampa, una per riga, tutte le regioni di memoria utilizzabili
 // trovate da mappa_memoria_inizializza(): indirizzo di partenza e

@@ -17,10 +17,14 @@ void print_at_color(char *str, int row, int col, char color);
 void stampa_stringa(char *stringa);
 void fprint(void *dato, char tipo);
 void present();
-void n_to_hex_str(unsigned long long valore, char *buffer_destinazione);
-void n_to_str(unsigned long long valore, char *buffer_destinazione);
+
+
+
+//debug effettive
+void stampa_dump_memoria(unsigned char *indirizzo_di_partenza, unsigned int numero_di_byte);
 void stampa_regioni_utilizzabili(void);
 
+//alloc e memoria reative
 void *alloc(unsigned long long byte);
 void libera(void *puntatore);
 

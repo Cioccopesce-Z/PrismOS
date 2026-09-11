@@ -11,7 +11,6 @@
 // ---------------------------------------------------------------------
 
 char itoc(int value);
-
 int ctoi(char c);
 
 int ptoi(void *pt);
@@ -19,5 +18,10 @@ char ptoc(void *pt);
 
 void *itop(int value);
 void *ctop(char c);
+
+void n_to_hex_str(unsigned long long valore, char *buffer_destinazione);
+void n_to_str(unsigned long long valore, char *buffer_destinazione);
+
+int hex_str_to_n(char str[]);
 
 #endif

@@ -7,6 +7,7 @@ DATA_OFFSET equ 0x10
 
 KERNEL_LOAD_SEG equ 0x1000
 KERNEL_START_ADDR equ 0x100000
+NUMERO_SETTORI_KERNEL equ 36
 
 MAPPA_MEMORIA_ADDR equ 0x8000   ; area libera tra il boot sector e 0x10000
 
@@ -45,7 +46,7 @@ mov dl, 0x80
 mov cl, 0x02
 mov ch, 0x00
 mov ah, 0x02
-mov al, 36                       ;numero di segmenti aggiornare sotto anche x512
+mov al, NUMERO_SETTORI_KERNEL                       ;numero di segmenti aggiornare sotto anche x512
 int 0x13
 
 jc disk_read_error
@@ -153,7 +154,7 @@ PModeMain:
     ; secondo il linker script (0x100000, cioe' KERNEL_START_ADDR)
     mov esi, 0x10000          ; indirizzo sorgente: dove ha scritto il BIOS
     mov edi, KERNEL_START_ADDR ; indirizzo destinazione: dove serve al kernel
-    mov ecx, 18432             ; numero di doppie parole da copiare                        50x512 25600
+    mov ecx, (NUMERO_SETTORI_KERNEL * 512) / 4        ; numero di doppie parole da copiare                        50x512 25600
                                 ; (24 settori x 512 byte / 4 byte per doppia parola)
     cld                         ; azzera la direzione di scorrimento: ESI/EDI
                                 ; avanzano invece di decrementare
