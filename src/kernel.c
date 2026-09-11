@@ -13,7 +13,6 @@ __uint8_t *memory;
 size_t memory_cursor = 0;
 
 /* configurazione della struttura: modificabile qui prima di begin(). */
-size_t to_declare = 35;
 size_t byte_for_lenght_of_the_lenght_of_the_scope = 1;
 size_t byte_for_scope_code = 1;
 
@@ -23,6 +22,8 @@ size_t byte_for_vleng = 1;
 size_t byte_for_method_lenght = 1;
 
 void kernel_main() <%
+
+    clear_screen(' ');
 
     idt_inizializza();
     temporizzatore_inizializza();
@@ -59,16 +60,29 @@ void kernel_main() <%
     // buffer stesso, non convertito da solo con itop().
     void *pt = memory + ix;
 
-    fprint(memory,'p');
-    print('\n');
-    fprint(&pt[1],'p');
-    print('\n');
-    fprint(&pt[2],'p');
-    print('\n');
-    fprint(&pt[3],'p');
+    fprint(pt,'p');
+    print(' ');
+    fprint( &pt, 'i');
     print('\n');
 
-    fprint( itop(get_value_of_variable(ix)), 'i');
+    fprint(&pt[1],'p');
+    print(' ');
+    fprint( &pt[1], 'i');
+    print('\n');
+
+    fprint(&pt[2],'p');
+    print(' ');
+    fprint( &pt[2], 'i');
+    print('\n');
+
+    fprint(&pt[3],'p');
+    print(' ');
+    fprint( &pt[3], 'i');
+    print('\n');
+
+    int lesbian = get_value_of_variable(ix);
+
+    fprint( &lesbian, 'i');
 
     
 

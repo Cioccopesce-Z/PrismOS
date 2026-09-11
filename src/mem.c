@@ -2,8 +2,11 @@
 #include "stdf.h"
 #include "loc.h"
 
+static size_t to_declare;
+
 void begin_fegh(size_t byte_to_allocate){
-    memory = alloc(byte_to_allocate);
+    
+    to_declare = byte_to_allocate;
 
     // alloc() non azzera la memoria restituita: contiene qualunque cosa
     // ci fosse prima. Il resto della libreria usa pero' "byte a zero"
@@ -12,9 +15,11 @@ void begin_fegh(size_t byte_to_allocate){
     // azzeramento esplicito, la primissima variabile dichiarata legge
     // un byte a caso e si comporta come se esistesse gia' un valore
     // con una lunghezza inventata.
+    memory = alloc(byte_to_allocate);
+
     for(size_t indice_byte = 0; indice_byte < byte_to_allocate; indice_byte++){
         memory[indice_byte] = 0;
-    }
+    }    
 }
 
 size_t bytes_needed(__uintmax_t value){
@@ -263,7 +268,13 @@ size_t resolve_value_lenght(size_t existing_lenght, size_t requested_lenght, __u
 }
 
 size_t resolve_method_lenght(size_t existing_lenght, size_t method_address){
+
     size_t needed = bytes_needed(method_address);
+    fprint(&method_address, 'i');
+    stampa_stringa(" <- method_address in resolve method lenght\n");
+
+    fprint(&needed, 'i');
+    stampa_stringa(" <- (1)needed in resolve method lenght\n");
 
     if(existing_lenght > 0){
         if(needed > existing_lenght){
@@ -272,11 +283,18 @@ size_t resolve_method_lenght(size_t existing_lenght, size_t method_address){
         }
         return existing_lenght;
     }
+    fprint(&needed, 'i');
+    stampa_stringa(" <- (2)needed in resolve method lenght\n");
 
     if(needed > byte_for_method_lenght){
-        
+
+        fprint(&needed, 'i');
+        stampa_stringa(" <- (3)needed in resolve method lenght\n");
         return 0;
     }
+
+    fprint(&needed, 'i');
+    stampa_stringa(" <- (3 o 4)return of resolve method lenght\n");
 
     return needed;
 }
@@ -326,7 +344,7 @@ size_t initialize_variable(int use_scope, size_t scope_address,                 
         fprint(&start, 'i');
         print(' ');
         fprint(&to_declare, 'i');
-        stampa_stringa("\nuscita1\n");
+        stampa_stringa("\nthe relative index to start a declaration from is higher than \nthe relative memory allocated for fegh\n");
         return start;
     }
 
@@ -337,7 +355,7 @@ size_t initialize_variable(int use_scope, size_t scope_address,                 
     if(new_v_lenght == 0) return start; // errore gia' stampato
 
     if(start + byte_for_scope + byte_for_dim + new_v_lenght >= to_declare){
-        stampa_stringa("uscita2\n");
+        stampa_stringa("\nnot enough space for a fegh declaration at start\n");
         return start;
     }
 
@@ -352,8 +370,9 @@ size_t initialize_variable(int use_scope, size_t scope_address,                 
     }
     else{
         size_t method_lenght = resolve_method_lenght(existing_method_lenght, method_address);
-        stampa_stringa("uscita3\n");
-        if(method_lenght == 0) return start; // errore gia' stampato
+        fprint(&method_lenght, 'i');
+        stampa_stringa(" <- return of resolve method lenght\n");
+        if(method_lenght == 0){stampa_stringa("uscita3\n"); return start;} // errore gia' stampato
 
 
         write_methodlist(record_end, method_lenght, method_address);

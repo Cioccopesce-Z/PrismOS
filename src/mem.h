@@ -17,7 +17,6 @@
 /* configurazione della struttura memoria: variabili, non define.
    vanno DEFINITE (con un valore) nel file che fa il main, PRIMA di
    chiamare begin() o qualunque altra funzione della libreria. */
-extern size_t to_declare;
 extern size_t byte_for_lenght_of_the_lenght_of_the_scope;
 extern size_t byte_for_scope_code;
 extern size_t byte_for_scope;
