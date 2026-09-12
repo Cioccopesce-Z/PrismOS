@@ -215,5 +215,6 @@ void libera(void *puntatore)
     // puntatore non trovato: doppio libera(), o mai allocato da alloc().
     // Per ora ignorato silenziosamente; potresti stampare un errore qui
     // per scovare questi bug piu' facilmente durante lo sviluppo.
+    fprint("puntatore %p non trovato possibile doppio libera o mai allocato\n",puntatore);
 }
 

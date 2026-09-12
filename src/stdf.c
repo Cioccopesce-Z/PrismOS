@@ -147,11 +147,7 @@ void stampa_dump_memoria(unsigned char *indirizzo_di_partenza, unsigned int nume
 }
 
 // Stampa una stringa di formato sostituendo via via ogni specificatore
-// (%d, %x, %s, %c, %%) con l'argomento corrispondente preso dalla
-// lista variabile. E' una versione ridotta della printf standard:
-// supporta solo i casi che servono in un kernel, non l'enorme numero
-// di varianti (larghezza, precisione, flag...) della printf completa
-// - quelle si possono aggiungere in seguito se servono davvero.
+// (%d, %x, %s, %c, %%) con l'argomento corrispondente preso dalla lista variabile
 void fprint(const char *formato, ...)
 {
     va_list argomenti;
@@ -185,8 +181,7 @@ void fprint(const char *formato, ...)
                     // Nota: qui non gestiamo il caso limite in cui
                     // valore e' esattamente il piu' piccolo int
                     // rappresentabile, dove "-valore" andrebbe in
-                    // overflow. Per un kernel didattico va bene
-                    // ignorarlo, ma vale la pena saperlo.
+                    // overflow
                     n_to_str((unsigned long long)(-valore), testo_numero);
                 }
                 else
@@ -240,9 +235,7 @@ void fprint(const char *formato, ...)
 
             default:
             {
-                // Specificatore sconosciuto: lo stampiamo cosi' com'e'
-                // invece di ignorarlo, cosi' un errore di battitura nel
-                // formato si nota subito invece di sparire nel nulla.
+                // Specificatore sconosciuto
                 print('%');
                 print(specificatore);
                 break;
@@ -253,4 +246,10 @@ void fprint(const char *formato, ...)
     }
 
     va_end(argomenti); // pulizia, obbligatoria per ogni va_start
+}
+
+void exit(int ext_code)
+{
+    exit_code = ext_code;
+    kernel_main(true);
 }

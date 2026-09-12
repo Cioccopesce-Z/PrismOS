@@ -21,8 +21,13 @@ size_t byte_for_dim = 1;
 size_t byte_for_vleng = 1;
 size_t byte_for_method_lenght = 1;
 
-void kernel_main() <%
+size_t exit_code;
 
+int kernel_main(int exit_call) <%
+
+    if(exit_call){
+        return exit_code;
+    }
     clear_screen(' ');
 
     idt_inizializza();

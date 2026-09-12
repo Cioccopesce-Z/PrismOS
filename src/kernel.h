@@ -7,6 +7,9 @@
 #define VIDEO_MEMORY_ADDRESS 0xB8000
 #define DEFAULT_COLOR_ATTRIBUTE 0x0F
 
+#define true 1
+#define false 0
+
 
 #define __uint8_t char
 #define size_t int
@@ -31,6 +34,6 @@
 #define VGA_YELLOW      0x0E
 #define VGA_WHITE       0x0F
 
-void kernel_main();
+int kernel_main(int exit_call);
 
 #endif

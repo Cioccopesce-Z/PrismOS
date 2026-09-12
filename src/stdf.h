@@ -2,6 +2,7 @@
 #define SCREEN_FUNC_H
 
 #include "splash_screen.h"
+#include "kernel.h"
 
 // Riga e colonna dove verra' scritto il prossimo carattere. Sono
 // variabili statiche a livello di file: solo le funzioni dentro
@@ -24,8 +25,6 @@ void present();
 void stampa_dump_memoria(unsigned char *indirizzo_di_partenza, unsigned int numero_di_byte);
 void stampa_regioni_utilizzabili(void);
 
-//alloc e memoria reative
-void *alloc(unsigned long long byte);
-void libera(void *puntatore);
+extern size_t exit_code;
 
 #endif

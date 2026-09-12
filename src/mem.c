@@ -270,9 +270,9 @@ size_t resolve_value_lenght(size_t existing_lenght, size_t requested_lenght, __u
 size_t resolve_method_lenght(size_t existing_lenght, size_t method_address){
 
     size_t needed = bytes_needed(method_address);
-    fprint("%d <- method_address in resolve method lenght\n",method_address);
+    //DEB fprint("%d <- method_address in resolve method lenght\n",method_address);
 
-    fprint("%d  <- (1)needed in resolve method lenght\n",needed);
+    //DEB fprint("%d  <- (1)needed in resolve method lenght\n",needed);
 
     if(existing_lenght > 0){
         if(needed > existing_lenght){
@@ -281,7 +281,7 @@ size_t resolve_method_lenght(size_t existing_lenght, size_t method_address){
         }
         return existing_lenght;
     }
-    fprint("%d  <- (2)needed in resolve method lenght\n",needed);
+    //DEB fprint("%d  <- (2)needed in resolve method lenght\n",needed);
 
     if(needed > byte_for_method_lenght){
 
@@ -289,7 +289,7 @@ size_t resolve_method_lenght(size_t existing_lenght, size_t method_address){
         return 0;
     }
 
-    fprint("%d  <- (3 o 4)needed in resolve method lenght\n",needed);
+    //DEB fprint("%d  <- (3 o 4)needed in resolve method lenght\n",needed);
 
     return needed;
 }
