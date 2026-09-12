@@ -15,7 +15,7 @@ void prism_screen(void){
     );
 
     print_at_color(
-        "|                            P R I S M   O S                                   |",
+        "|                            P R I S M   K E R N E L                           |",
         3, 0, VGA_LIGHT_MAGENTA
     );
 
@@ -40,7 +40,7 @@ void prism_screen(void){
     );
 
     print_at_color(
-        "|                        |         O S            |                            |",
+        "|                        |        KERNEL          |                            |",
         8, 0, VGA_LIGHT_RED
     );
 
@@ -75,17 +75,17 @@ void prism_screen(void){
     );
 
     print_at_color(
-        "|                         [ KERNEL OK ]                                        |",
+        "|                         [ KERNEL I MEAN U CAN SEE IT WORKING ]               |",
         15, 0, VGA_LIGHT_GREEN
     );
 
     print_at_color(
-        "|                         [ IDT OK ]                                           |",
+        "|                         [ IDT SEEMS TO BE OK ]                               |",
         16, 0, VGA_LIGHT_GREEN
     );
 
     print_at_color(
-        "|                         [ VGA OK ]                                           |",
+        "|                         [ VGA IF U SEE THIS IT WORKS ]                       |",
         17, 0, VGA_LIGHT_GREEN
     );
 
@@ -120,7 +120,7 @@ void prism_screen(void){
     );
 
     print_at_color(
-        "                         PRISM OS v0.1",
+        "                         PRISM OS v0.0.3",
         24, 0, VGA_LIGHT_GRAY
     );
 }

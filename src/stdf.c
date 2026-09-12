@@ -5,6 +5,15 @@
 #include "delay.h"
 #include "type_conv.h"
 
+static int riga_corrente = 0;
+static int colonna_corrente = 0;
+
+
+void input(char *output_pt)
+{
+
+}
+
 
 // Scrive un carattere e il suo colore in una cella dello schermo,
 // identificata dal suo indice (0 = angolo in alto a sinistra,
@@ -18,6 +27,33 @@ static void scrivi_carattere_in_cella_schermo(int indice_casella, char carattere
     video_memory[indice_casella * 2] = carattere;
     video_memory[indice_casella * 2 + 1] = colore;
 }
+
+// Muove il cursore di una posizione indietro e cancella il carattere
+// che ci stava, per l'effetto visivo del backspace. E' l'UNICA
+// funzione che un altro file deve chiamare per questo scopo: nessuno,
+// al di fuori di questo file, deve mai leggere o scrivere
+// riga_corrente/colonna_corrente direttamente, altrimenti si
+// ripresenta lo stesso identico bug con un altro nome.
+void sposta_cursore_indietro(void)
+{
+    if(colonna_corrente > 0)
+    {
+        colonna_corrente = colonna_corrente - 1;
+    }
+    else if(riga_corrente > 0)
+    {
+        // Il cursore era gia' a inizio riga: senza questo caso,
+        // premere backspace li' sembrerebbe non fare nulla, mentre
+        // in realta' dovrebbe tornare in fondo alla riga precedente.
+        riga_corrente = riga_corrente - 1;
+        colonna_corrente = SCREEN_WIDTH_IN_CHARACTERS - 1;
+    }
+
+    int indice_casella = riga_corrente * SCREEN_WIDTH_IN_CHARACTERS + colonna_corrente;
+    scrivi_carattere_in_cella_schermo(indice_casella, ' ', DEFAULT_COLOR_ATTRIBUTE);
+}
+
+
 
 
 void clear_screen(char character_to_use_to_fill_the_screen)

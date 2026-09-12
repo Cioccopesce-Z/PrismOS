@@ -7,8 +7,7 @@
 // Riga e colonna dove verra' scritto il prossimo carattere. Sono
 // variabili statiche a livello di file: solo le funzioni dentro
 // questo file possono leggerle o modificarle, tramite stampa_carattere.
-static int riga_corrente = 0;
-static int colonna_corrente = 0;
+void sposta_cursore_indietro(void);
 
 /*clear the screen in vga mode with char*/
 void clear_screen(char character_to_use_to_fill_the_screen);

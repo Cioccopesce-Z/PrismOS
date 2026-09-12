@@ -2,6 +2,7 @@
 
 #include "delay.h"
 #include "idt.h"
+#include "shell.h"
 #include "loc.h"
 #include "mem.h"
 #include "mappa_memoria.h"
@@ -60,8 +61,11 @@ int kernel_main(int exit_call) <%
 
     stampa_dump_memoria(memory,8);
 
+    shell_inizializza();
+
 
     while(1) {
+        shell_ciclo_principale();
         __asm__ volatile ("hlt");
     }
 %>

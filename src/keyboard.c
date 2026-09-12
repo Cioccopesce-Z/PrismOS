@@ -1,5 +1,6 @@
 // file: src/keyboard.c
 #include "keyboard.h"
+#include "shell.h"
 #include "stdf.h"
 #include "io.h"
 
@@ -17,7 +18,7 @@ static const char tabella_scan_code_in_caratteri[59] = {
     [0x10] = 'q', [0x11] = 'w', [0x12] = 'e', [0x13] = 'r', [0x14] = 't',
     [0x15] = 'y', [0x16] = 'u', [0x17] = 'i', [0x18] = 'o', [0x19] = 'p',
     [0x1E] = 'a', [0x1F] = 's', [0x20] = 'd', [0x21] = 'f', [0x22] = 'g',
-    [0x23] = 'h', [0x24] = 'j', [0x25] = 'k', [0x26] = 'l',
+    [0x23] = 'h', [0x24] = 'j', [0x25] = 'k', [0x26] = 'l', [0x0E] = '\b',
     [0x2C] = 'z', [0x2D] = 'x', [0x2E] = 'c', [0x2F] = 'v', [0x30] = 'b',
     [0x31] = 'n', [0x32] = 'm',
     [0x1C] = '\n', // tasto Invio
@@ -38,7 +39,7 @@ void gestore_interruzione_tastiera(void *informazioni_interruzione){
     if(scan_code < 0x80){
         //stampa_carattere(scan_code);
         if(scan_code < sizeof(tabella_scan_code_in_caratteri) && tabella_scan_code_in_caratteri[scan_code] != 0){
-            print(tabella_scan_code_in_caratteri[scan_code]);
+            shell_gestisci_carattere(tabella_scan_code_in_caratteri[scan_code]);
         }
     }
 
